@@ -6,24 +6,30 @@ using namespace std;
 
 const int n = 1024;
 
-float rand_float(float a, float b) {
+float rand_float(float a, float b) 
+{
     return ((b - a) * ((float)rand() / RAND_MAX)) + a;
 }
 
-complex<float> rand_complex(float a, float b) {
+complex<float> rand_complex(float a, float b) 
+{
     return { rand_float(a, b), rand_float(a, b) };
 }
 
-void generate_matrix(complex<float>* A) {
+void generate_matrix(complex<float>* A) 
+{
     srand(static_cast<unsigned int>(time(nullptr)));
     for (int i = 0; i < n * n; i++) {
         A[i] = rand_complex(-10.0f, 10.0f);
     }
 }
 
-void print_matrix(complex<float>* A) {
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
+void print_matrix(complex<float>* A) 
+{
+    for (int i = 0; i < n; i++) 
+    {
+        for (int j = 0; j < n; j++) 
+        {
             cout << A[i * n + j] << " ";
         }
         cout << endl;
@@ -31,11 +37,15 @@ void print_matrix(complex<float>* A) {
 }
 
 // Перемножение по формуле из линейной алгебры
-void mult1(complex<float>* A, complex<float>* B, complex<float>* C) {
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
+void mult1(complex<float>* A, complex<float>* B, complex<float>* C)
+{
+    for (int i = 0; i < n; i++) 
+    {
+        for (int j = 0; j < n; j++) 
+        {
             C[i * n + j] = 0.0f;
-            for (int k = 0; k < n; k++) {
+            for (int k = 0; k < n; k++) 
+            {
                 C[i * n + j] += A[i * n + k] * B[k * n + j];
             }
         }
@@ -43,7 +53,8 @@ void mult1(complex<float>* A, complex<float>* B, complex<float>* C) {
 }
 
 // Перемножение с помощью функции cblas_cgemm из BLAS
-void mult2(complex<float>* A, complex<float>* B, complex<float>* C) {
+void mult2(complex<float>* A, complex<float>* B, complex<float>* C) 
+{
     complex<float> alpha(1.0f, 0.0f);
     complex<float> beta(0.0f, 0.0f);
     int lda = n;
@@ -55,13 +66,19 @@ void mult2(complex<float>* A, complex<float>* B, complex<float>* C) {
 // Оптимизированное перемножение
 void mult3(complex<float>* A, complex<float>* B, complex<float>* C) {
     const int block_size = 32; 
-    for (int i = 0; i < n; i += block_size) {
-        for (int j = 0; j < n; j += block_size) {
-            for (int k = 0; k < n; k += block_size) {
-                for (int ii = i; ii < i + block_size && ii < n; ++ii) {
-                    for (int jj = j; jj < j + block_size && jj < n; ++jj) {
+    for (int i = 0; i < n; i += block_size) 
+    {
+        for (int j = 0; j < n; j += block_size) 
+        {
+            for (int k = 0; k < n; k += block_size) 
+            {
+                for (int ii = i; ii < i + block_size && ii < n; ++ii)
+                {
+                    for (int jj = j; jj < j + block_size && jj < n; ++jj) 
+                    {
                         complex<float> sum(0.0f, 0.0f);
-                        for (int kk = k; kk < k + block_size && kk < n; ++kk) {
+                        for (int kk = k; kk < k + block_size && kk < n; ++kk) 
+                        {
                             sum += A[ii * n + kk] * B[kk * n + jj];
                         }
                         C[ii * n + jj] += sum;
@@ -72,7 +89,8 @@ void mult3(complex<float>* A, complex<float>* B, complex<float>* C) {
     }
 }
 
-int main() {
+int main() 
+{
     setlocale(LC_ALL, "rus");
     cout << "Работу выполнил Ершов Владислав Олегович РПИа-о22 " << endl;
     complex<float>* A = new complex<float>[n * n];
@@ -119,10 +137,10 @@ int main() {
     cout << endl;
 
     
-float c = 2.0f * n * n * n;
-double mflops1 = c / (t1 * 1e-6);
-double mflops2 = c / (t2 * 1e-6);
-double mflops3 = c / (t3 * 1e-6);
+    float c = 2.0f * n * n * n;
+    double mflops1 = c / (t1 * 1e-6);
+    double mflops2 = c / (t2 * 1e-6);
+    double mflops3 = c / (t3 * 1e-6);
 
     cout << "Время затраченное на 1 способ: " << ((float)t1) / CLOCKS_PER_SEC << "s" << endl;
     cout << "MFLOPS первый способ " << mflops1 << endl;
